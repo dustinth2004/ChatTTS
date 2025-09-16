@@ -7,6 +7,16 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class ConvNeXtBlock(nn.Module):
+    """
+    A ConvNeXt block module.
+
+    Args:
+        dim (int): The number of input channels.
+        intermediate_dim (int): The number of intermediate channels.
+        kernel (int): The kernel size of the depthwise convolution.
+        dilation (int): The dilation of the depthwise convolution.
+        layer_scale_init_value (float, optional): The initial value for layer scaling. Defaults to 1e-6.
+    """
     def __init__(
         self,
         dim: int,
@@ -32,6 +42,16 @@ class ConvNeXtBlock(nn.Module):
         )
 
     def forward(self, x: torch.Tensor, cond = None) -> torch.Tensor:
+        """
+        Forward pass of the ConvNeXt block.
+
+        Args:
+            x (torch.Tensor): The input tensor of shape (B, C, T).
+            cond (torch.Tensor, optional): The conditioning tensor. Defaults to None.
+
+        Returns:
+            torch.Tensor: The output tensor of shape (B, C, T).
+        """
         residual = x
         x = self.dwconv(x)
         x = x.transpose(1, 2)  # (B, C, T) -> (B, T, C)
@@ -49,6 +69,17 @@ class ConvNeXtBlock(nn.Module):
 
 
 class GFSQ(nn.Module):
+    """
+    A Grouped Residual Finite-State Quantizer (GFSQ) module.
+
+    Args:
+        dim (int): The input dimension.
+        levels (list of int): The number of levels for each quantizer.
+        G (int): The number of groups.
+        R (int): The number of residual quantizers.
+        eps (float, optional): A small epsilon value for numerical stability. Defaults to 1e-5.
+        transpose (bool, optional): Whether to transpose the input and output tensors. Defaults to True.
+    """
 
     def __init__(self, 
             dim, levels, G, R, eps=1e-5, transpose = True
@@ -67,6 +98,15 @@ class GFSQ(nn.Module):
         self.R = R
         
     def _embed(self, x):
+        """
+        Embeds the input tensor using the quantizer.
+
+        Args:
+            x (torch.Tensor): The input tensor.
+
+        Returns:
+            torch.Tensor: The embedded tensor.
+        """
         if self.transpose:
             x = x.transpose(1,2)
         x = rearrange(
@@ -76,6 +116,15 @@ class GFSQ(nn.Module):
         return feat.transpose(1,2) if self.transpose else feat
         
     def forward(self, x,):
+        """
+        Forward pass of the GFSQ module.
+
+        Args:
+            x (torch.Tensor): The input tensor.
+
+        Returns:
+            tuple: A tuple containing the loss, quantized features, perplexity, None, and indices.
+        """
         if self.transpose:
             x = x.transpose(1,2)
         feat, ind = self.quantizer(x)
@@ -96,6 +145,19 @@ class GFSQ(nn.Module):
         )
         
 class DVAEDecoder(nn.Module):
+    """
+    A DVAE decoder module.
+
+    Args:
+        idim (int): The input dimension.
+        odim (int): The output dimension.
+        n_layer (int, optional): The number of ConvNeXt blocks. Defaults to 12.
+        bn_dim (int, optional): The dimension of the bottleneck layer. Defaults to 64.
+        hidden (int, optional): The hidden dimension of the ConvNeXt blocks. Defaults to 256.
+        kernel (int, optional): The kernel size of the depthwise convolution. Defaults to 7.
+        dilation (int, optional): The dilation of the depthwise convolution. Defaults to 2.
+        up (bool, optional): Whether to use upsampling. Defaults to False.
+    """
     def __init__(self, idim, odim,
                  n_layer = 12, bn_dim = 64, hidden = 256, 
                  kernel = 7, dilation = 2, up = False
@@ -112,6 +174,16 @@ class DVAEDecoder(nn.Module):
         self.conv_out = nn.Conv1d(hidden, odim, kernel_size=1, bias=False)
 
     def forward(self, input, conditioning=None):
+        """
+        Forward pass of the DVAE decoder.
+
+        Args:
+            input (torch.Tensor): The input tensor of shape (B, T, C).
+            conditioning (torch.Tensor, optional): The conditioning tensor. Defaults to None.
+
+        Returns:
+            torch.Tensor: The output tensor of shape (B, T, C).
+        """
         # B, T, C
         x = input.transpose(1, 2)
         x = self.conv_in(x)
@@ -123,6 +195,14 @@ class DVAEDecoder(nn.Module):
     
 
 class DVAE(nn.Module):
+    """
+    A Discrete Variational Autoencoder (DVAE) module.
+
+    Args:
+        decoder_config (dict): The configuration for the DVAE decoder.
+        vq_config (dict): The configuration for the vector quantization layer.
+        dim (int, optional): The dimension of the output convolution. Defaults to 512.
+    """
     def __init__(
         self, decoder_config, vq_config, dim=512
     ):
@@ -137,6 +217,15 @@ class DVAE(nn.Module):
             self.vq_layer = None
 
     def forward(self, inp):
+        """
+        Forward pass of the DVAE module.
+
+        Args:
+            inp (torch.Tensor): The input tensor.
+
+        Returns:
+            torch.Tensor: The output mel-spectrogram.
+        """
 
         if self.vq_layer is not None:
             vq_feats = self.vq_layer._embed(inp)

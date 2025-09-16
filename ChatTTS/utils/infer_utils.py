@@ -4,6 +4,19 @@ import torch.nn.functional as F
 
     
 class CustomRepetitionPenaltyLogitsProcessorRepeat():
+    """
+    A custom logit processor that applies a repetition penalty to the logits.
+
+    This processor penalizes logits of tokens that have appeared in the past,
+    making the model less likely to repeat itself.
+
+    Args:
+        penalty (float): The penalty factor. A value greater than 1 encourages
+            the model to generate new tokens, while a value less than 1
+            encourages it to repeat tokens.
+        max_input_ids (int): The maximum input ID to consider for the penalty.
+        past_window (int): The size of the past window to consider for repetition.
+    """
 
     def __init__(self, penalty: float, max_input_ids, past_window):
         if not isinstance(penalty, float) or not (penalty > 0):
@@ -14,6 +27,16 @@ class CustomRepetitionPenaltyLogitsProcessorRepeat():
         self.past_window = past_window
 
     def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+        """
+        Applies the repetition penalty to the logits.
+
+        Args:
+            input_ids (torch.LongTensor): The input IDs of the sequence.
+            scores (torch.FloatTensor): The logits for the next token.
+
+        Returns:
+            torch.FloatTensor: The modified logits.
+        """
         
         input_ids = input_ids[:, -self.past_window:]
         freq = F.one_hot(input_ids, scores.size(1)).sum(1)
@@ -24,6 +47,19 @@ class CustomRepetitionPenaltyLogitsProcessorRepeat():
         return scores
     
 class CustomRepetitionPenaltyLogitsProcessor():
+    """
+    A custom logit processor that applies a repetition penalty to the logits.
+
+    This processor penalizes logits of tokens that have appeared in the past,
+    making the model less likely to repeat itself.
+
+    Args:
+        penalty (float): The penalty factor. A value greater than 1 encourages
+            the model to generate new tokens, while a value less than 1
+            encourages it to repeat tokens.
+        max_input_ids (int): The maximum input ID to consider for the penalty.
+        past_window (int): The size of the past window to consider for repetition.
+    """
 
     def __init__(self, penalty: float, max_input_ids, past_window):
         if not isinstance(penalty, float) or not (penalty > 0):
@@ -34,6 +70,16 @@ class CustomRepetitionPenaltyLogitsProcessor():
         self.past_window = past_window
 
     def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+        """
+        Applies the repetition penalty to the logits.
+
+        Args:
+            input_ids (torch.LongTensor): The input IDs of the sequence.
+            scores (torch.FloatTensor): The logits for the next token.
+
+        Returns:
+            torch.FloatTensor: The modified logits.
+        """
         
         input_ids = input_ids[:, -self.past_window:]
         score = torch.gather(scores, 1, input_ids)

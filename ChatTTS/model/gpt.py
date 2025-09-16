@@ -15,6 +15,13 @@ from transformers import LlamaModel, LlamaConfig
     
     
 class LlamaMLP(nn.Module):
+    """
+    A LLaMA-style MLP module.
+
+    Args:
+        hidden_size (int): The hidden size of the MLP.
+        intermediate_size (int): The intermediate size of the MLP.
+    """
     def __init__(self, hidden_size, intermediate_size):
         super().__init__()
         self.hidden_size = hidden_size
@@ -25,11 +32,30 @@ class LlamaMLP(nn.Module):
         self.act_fn = F.silu
 
     def forward(self, x):
+        """
+        Forward pass of the LlamaMLP.
+
+        Args:
+            x (torch.Tensor): The input tensor.
+
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         down_proj = self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x))
         return down_proj
     
     
 class GPT_warpper(nn.Module):
+    """
+    A wrapper class for a GPT-style model.
+
+    Args:
+        gpt_config (dict): The configuration for the GPT model.
+        num_audio_tokens (int): The number of audio tokens.
+        num_text_tokens (int): The number of text tokens.
+        num_vq (int, optional): The number of vector quantizers. Defaults to 4.
+        **kwargs: Additional keyword arguments.
+    """
     def __init__(
         self, 
         gpt_config, 
@@ -51,6 +77,15 @@ class GPT_warpper(nn.Module):
         self.head_code = nn.ModuleList([weight_norm(nn.Linear(self.model_dim, num_audio_tokens, bias=False), name='weight') for i in range(self.num_vq)])
 
     def build_model(self, config):
+        """
+        Builds the GPT model from a configuration.
+
+        Args:
+            config (dict): The configuration for the GPT model.
+
+        Returns:
+            LlamaModel: The GPT model.
+        """
         
         configuration = LlamaConfig(**config)
         model = LlamaModel(configuration)
@@ -59,6 +94,17 @@ class GPT_warpper(nn.Module):
         return model
     
     def get_emb(self, input_ids, text_mask, **kwargs):
+        """
+        Gets the embeddings for the input IDs.
+
+        Args:
+            input_ids (torch.Tensor): The input IDs.
+            text_mask (torch.Tensor): A mask indicating which tokens are text.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            torch.Tensor: The embeddings for the input IDs.
+        """
 
         emb_text = self.emb_text(input_ids[text_mask][:, 0])
         
@@ -74,6 +120,20 @@ class GPT_warpper(nn.Module):
     def prepare_inputs_for_generation(
         self, input_ids, past_key_values=None, attention_mask=None, inputs_embeds=None, cache_position=None, **kwargs
     ):
+        """
+        Prepares the inputs for generation.
+
+        Args:
+            input_ids (torch.Tensor): The input IDs.
+            past_key_values (tuple, optional): The past key-value states. Defaults to None.
+            attention_mask (torch.Tensor, optional): The attention mask. Defaults to None.
+            inputs_embeds (torch.Tensor, optional): The input embeddings. Defaults to None.
+            cache_position (torch.Tensor, optional): The cache position. Defaults to None.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            dict: A dictionary of model inputs.
+        """
         # With static cache, the `past_key_values` is None
         # TODO joao: standardize interface for the different Cache classes and remove of this if
         has_static_cache = False
@@ -168,6 +228,26 @@ class GPT_warpper(nn.Module):
         return_attn=False,
         return_hidden=False,
     ):
+        """
+        Generates sequences of tokens.
+
+        Args:
+            emb (torch.Tensor): The input embeddings.
+            inputs_ids (torch.Tensor): The input IDs.
+            temperature (torch.Tensor): The temperature for sampling.
+            eos_token (int): The end-of-sequence token ID.
+            attention_mask (torch.Tensor, optional): The attention mask. Defaults to None.
+            max_new_token (int, optional): The maximum number of new tokens to generate. Defaults to 2048.
+            min_new_token (int, optional): The minimum number of new tokens to generate. Defaults to 0.
+            LogitsWarpers (list, optional): A list of logit warpers. Defaults to [].
+            LogitsProcessors (list, optional): A list of logit processors. Defaults to [].
+            infer_text (bool, optional): Whether to infer text or codes. Defaults to False.
+            return_attn (bool, optional): Whether to return attention weights. Defaults to False.
+            return_hidden (bool, optional): Whether to return hidden states. Defaults to False.
+
+        Returns:
+            dict: A dictionary containing the generated IDs, attentions, and hidden states.
+        """
         
         with torch.no_grad():   
         
