@@ -15,18 +15,27 @@ def infer_code(
     max_new_token = 2048,
     **kwargs
 ):
-    """
-    Infers audio codes from text using the pretrained models.
+    """Infers audio codes from text using the pretrained models.
+
+    This function takes a list of text strings and generates audio codes
+    using the provided GPT-style model. It supports various generation
+    parameters for controlling the output.
 
     Args:
-        models (dict): A dictionary containing the pretrained models.
+        models (dict): A dictionary containing the pretrained models, including
+            the GPT model and tokenizer.
         text (list of str or str): The input text(s) to be synthesized.
-        spk_emb (torch.Tensor, optional): The speaker embedding. Defaults to None.
-        top_P (float, optional): The top-P sampling probability. Defaults to 0.7.
+        spk_emb (torch.Tensor, optional): The speaker embedding.
+            Defaults to None.
+        top_P (float, optional): The top-P sampling probability.
+            Defaults to 0.7.
         top_K (int, optional): The top-K sampling size. Defaults to 20.
-        temperature (float or list of float, optional): The sampling temperature. Defaults to 0.3.
-        repetition_penalty (float, optional): The repetition penalty. Defaults to 1.05.
-        max_new_token (int, optional): The maximum number of new tokens to generate. Defaults to 2048.
+        temperature (float or list of float, optional): The sampling
+            temperature. Defaults to 0.3.
+        repetition_penalty (float, optional): The repetition penalty.
+            Defaults to 1.05.
+        max_new_token (int, optional): The maximum number of new tokens to
+            generate. Defaults to 2048.
         **kwargs: Additional keyword arguments for the generation process.
 
     Returns:
@@ -100,18 +109,26 @@ def refine_text(
     prompt = '',
     **kwargs
 ):
-    """
-    Refines the input text by adding prosodic features.
+    """Refines the input text by adding prosodic features.
+
+    This function takes a list of text strings and uses the GPT-style model
+    to predict and insert prosodic features, such as breaks and pauses.
 
     Args:
-        models (dict): A dictionary containing the pretrained models.
+        models (dict): A dictionary containing the pretrained models, including
+            the GPT model and tokenizer.
         text (list of str or str): The input text(s) to be refined.
-        top_P (float, optional): The top-P sampling probability. Defaults to 0.7.
+        top_P (float, optional): The top-P sampling probability.
+            Defaults to 0.7.
         top_K (int, optional): The top-K sampling size. Defaults to 20.
-        temperature (float, optional): The sampling temperature. Defaults to 0.7.
-        repetition_penalty (float, optional): The repetition penalty. Defaults to 1.0.
-        max_new_token (int, optional): The maximum number of new tokens to generate. Defaults to 384.
-        prompt (str, optional): A prompt to be added to the text. Defaults to ''.
+        temperature (float, optional): The sampling temperature.
+            Defaults to 0.7.
+        repetition_penalty (float, optional): The repetition penalty.
+            Defaults to 1.0.
+        max_new_token (int, optional): The maximum number of new tokens to
+            generate. Defaults to 384.
+        prompt (str, optional): A prompt to be added to the text.
+            Defaults to ''.
         **kwargs: Additional keyword arguments for the generation process.
 
     Returns:

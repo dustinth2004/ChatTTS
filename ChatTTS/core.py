@@ -17,31 +17,29 @@ logging.basicConfig(level = logging.INFO)
 
 
 class Chat:
-    """
-    A chat class for synthesizing speech from text.
+    """A chat class for synthesizing speech from text.
 
     This class provides a high-level interface for loading pre-trained models
-    and generating audio from text inputs. It supports both English and Chinese languages,
-    with options for fine-grained control over prosodic features.
+    and generating audio from text inputs. It supports both English and Chinese
+    languages, with options for fine-grained control over prosodic features.
 
     Attributes:
         pretrain_models (dict): A dictionary to store the pre-trained models.
         logger (logging.Logger): A logger for recording events and debugging.
     """
     def __init__(self, ):
-        """
-        Initializes the Chat class.
-        """
+        """Initializes the Chat class."""
         self.pretrain_models = {}
         self.logger = logging.getLogger(__name__)
         
     def check_model(self, level = logging.INFO, use_decoder = False):
-        """
-        Checks if all required models are initialized.
+        """Checks if all required models are initialized.
 
         Args:
-            level (int, optional): The logging level for messages. Defaults to logging.INFO.
-            use_decoder (bool, optional): Whether to check for the decoder model. Defaults to False.
+            level (int, optional): The logging level for messages.
+                Defaults to logging.INFO.
+            use_decoder (bool, optional): Whether to check for the decoder model.
+                Defaults to False.
 
         Returns:
             bool: True if all required models are initialized, False otherwise.
@@ -65,14 +63,13 @@ class Chat:
         return not not_finish
         
     def load_models(self, source='huggingface', force_redownload=False, local_path='<LOCAL_PATH>'):
-        """
-        Loads the pre-trained models from the specified source.
+        """Loads the pre-trained models from the specified source.
 
         Args:
             source (str, optional): The source to load the models from.
                 Can be 'huggingface' or 'local'. Defaults to 'huggingface'.
-            force_redownload (bool, optional): Whether to force redownload of the models
-                from Hugging Face. Defaults to False.
+            force_redownload (bool, optional): Whether to force redownload of
+                the models from Hugging Face. Defaults to False.
             local_path (str, optional): The local path to the models.
                 Required if source is 'local'. Defaults to '<LOCAL_PATH>'.
         """
@@ -105,20 +102,29 @@ class Chat:
         tokenizer_path: str = None,
         device: str = None
     ):
-        """
-        Loads the individual pre-trained models.
+        """Loads the individual pre-trained models.
 
         Args:
-            vocos_config_path (str, optional): Path to the Vocos configuration file. Defaults to None.
-            vocos_ckpt_path (str, optional): Path to the Vocos checkpoint file. Defaults to None.
-            dvae_config_path (str, optional): Path to the DVAE configuration file. Defaults to None.
-            dvae_ckpt_path (str, optional): Path to the DVAE checkpoint file. Defaults to None.
-            gpt_config_path (str, optional): Path to the GPT configuration file. Defaults to None.
-            gpt_ckpt_path (str, optional): Path to the GPT checkpoint file. Defaults to None.
-            decoder_config_path (str, optional): Path to the decoder configuration file. Defaults to None.
-            decoder_ckpt_path (str, optional): Path to the decoder checkpoint file. Defaults to None.
-            tokenizer_path (str, optional): Path to the tokenizer file. Defaults to None.
-            device (str, optional): The device to load the models on. If None, it will be automatically selected. Defaults to None.
+            vocos_config_path (str, optional): Path to the Vocos
+                configuration file. Defaults to None.
+            vocos_ckpt_path (str, optional): Path to the Vocos checkpoint file.
+                Defaults to None.
+            dvae_config_path (str, optional): Path to the DVAE configuration
+                file. Defaults to None.
+            dvae_ckpt_path (str, optional): Path to the DVAE checkpoint file.
+                Defaults to None.
+            gpt_config_path (str, optional): Path to the GPT configuration
+                file. Defaults to None.
+            gpt_ckpt_path (str, optional): Path to the GPT checkpoint file.
+                Defaults to None.
+            decoder_config_path (str, optional): Path to the decoder
+                configuration file. Defaults to None.
+            decoder_ckpt_path (str, optional): Path to the decoder checkpoint
+                file. Defaults to None.
+            tokenizer_path (str, optional): Path to the tokenizer file.
+                Defaults to None.
+            device (str, optional): The device to load the models on. If None,
+                it will be automatically selected. Defaults to None.
         """
         if not device:
             device = select_device(4096)
@@ -175,19 +181,24 @@ class Chat:
         params_infer_code={}, 
         use_decoder=False
     ):
-        """
-        Synthesizes speech from text.
+        """Synthesizes speech from text.
 
         Args:
             text (list of str): A list of text strings to synthesize.
-            skip_refine_text (bool, optional): Whether to skip the text refinement step. Defaults to False.
-            refine_text_only (bool, optional): Whether to only perform text refinement and return the refined text. Defaults to False.
-            params_refine_text (dict, optional): Parameters for the text refinement step. Defaults to {}.
-            params_infer_code (dict, optional): Parameters for the code inference step. Defaults to {}.
-            use_decoder (bool, optional): Whether to use the decoder for generating audio. Defaults to False.
+            skip_refine_text (bool, optional): Whether to skip the text
+                refinement step. Defaults to False.
+            refine_text_only (bool, optional): Whether to only perform text
+                refinement and return the refined text. Defaults to False.
+            params_refine_text (dict, optional): Parameters for the text
+                refinement step. Defaults to {}.
+            params_infer_code (dict, optional): Parameters for the code
+                inference step. Defaults to {}.
+            use_decoder (bool, optional): Whether to use the decoder for
+                generating audio. Defaults to False.
 
         Returns:
-            list of numpy.ndarray: A list of synthesized audio waveforms as NumPy arrays.
+            list of numpy.ndarray: A list of synthesized audio waveforms as
+                NumPy arrays.
         """
         
         assert self.check_model(use_decoder=use_decoder)
@@ -213,11 +224,10 @@ class Chat:
         return wav
     
     def sample_random_speaker(self, ):
-        """
-        Samples a random speaker embedding.
+        """Samples a random speaker embedding.
 
-        The speaker embedding is sampled from a Gaussian distribution with mean and standard deviation
-        derived from the pre-trained speaker statistics.
+        The speaker embedding is sampled from a Gaussian distribution with mean
+        and standard deviation derived from the pre-trained speaker statistics.
 
         Returns:
             torch.Tensor: A random speaker embedding.

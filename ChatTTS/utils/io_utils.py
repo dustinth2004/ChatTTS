@@ -3,8 +3,7 @@ import os
 import logging
 
 def get_latest_modified_file(directory):
-    """
-    Gets the path of the most recently modified file in a directory.
+    """Gets the path of the most recently modified file in a directory.
 
     Args:
         directory (str): The path to the directory.

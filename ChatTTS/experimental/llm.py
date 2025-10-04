@@ -23,8 +23,7 @@ prompt_dict = {
 }          
                 
 class llm_api:
-    """
-    A wrapper class for interacting with a large language model (LLM) API.
+    """A wrapper class for interacting with a large language model (LLM) API.
 
     This class provides a simplified interface for making API calls to an LLM,
     handling the construction of prompts and parsing the responses.
@@ -34,8 +33,7 @@ class llm_api:
         model (str): The name of the LLM model to use.
     """
     def __init__(self, api_key, base_url, model):
-        """
-        Initializes the llm_api class.
+        """Initializes the llm_api class.
 
         Args:
             api_key (str): The API key for the LLM service.
@@ -48,13 +46,12 @@ class llm_api:
         )
         self.model = model
     def call(self, user_question, temperature = 0.3, prompt_version='kimi', **kwargs):
-        """
-        Makes a call to the LLM API.
+        """Makes a call to the LLM API.
 
         Args:
             user_question (str): The user's question or input.
-            temperature (float, optional): The temperature for the LLM's response generation.
-                Defaults to 0.3.
+            temperature (float, optional): The temperature for the LLM's
+                response generation. Defaults to 0.3.
             prompt_version (str, optional): The version of the prompt to use.
                 Defaults to 'kimi'.
             **kwargs: Additional keyword arguments to pass to the LLM API.
