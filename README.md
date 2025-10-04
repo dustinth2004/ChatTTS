@@ -138,23 +138,23 @@ The main class for text-to-speech synthesis.
 
 #### `Chat.load_models(source='huggingface', force_redownload=False, local_path='<LOCAL_PATH>')`
 Loads the pretrained models from the specified source.
--   **`source`**: `'huggingface'` or `'local'`.
--   **`force_redownload`**: If `True`, forces redownload from Hugging Face.
--   **`local_path`**: The local path to the models if `source` is `'local'`.
+-   **`source`**: The source to load the models from. Can be `'huggingface'` or `'local'`. Defaults to `'huggingface'`.
+-   **`force_redownload`**: Whether to force redownload of the models from Hugging Face. Defaults to `False`.
+-   **`local_path`**: The local path to the models. Required if `source` is `'local'`. Defaults to `'<LOCAL_PATH>'`.
 
 #### `Chat.infer(text, skip_refine_text=False, refine_text_only=False, params_refine_text={}, params_infer_code={}, use_decoder=False)`
 Synthesizes speech from text.
 -   **`text`**: A list of text strings to synthesize.
--   **`skip_refine_text`**: If `True`, skips the text refinement step.
--   **`refine_text_only`**: If `True`, only performs text refinement and returns the refined text.
--   **`params_refine_text`**: Parameters for the text refinement step.
--   **`params_infer_code`**: Parameters for the code inference step.
--   **`use_decoder`**: If `True`, uses the decoder for generating audio.
+-   **`skip_refine_text`**: Whether to skip the text refinement step. Defaults to `False`.
+-   **`refine_text_only`**: Whether to only perform text refinement and return the refined text. Defaults to `False`.
+-   **`params_refine_text`**: Parameters for the text refinement step. Defaults to `{}`.
+-   **`params_infer_code`**: Parameters for the code inference step. Defaults to `{}`.
+-   **`use_decoder`**: Whether to use the decoder for generating audio. Defaults to `False`.
 
 #### `Chat.sample_random_speaker()`
-Samples a random speaker embedding.
+Samples a random speaker embedding from a Gaussian distribution.
 
-For more details, please refer to the docstrings in the source code.
+For more details on these methods and other functions in the library, please refer to the comprehensive docstrings in the source code.
 
 ---
 

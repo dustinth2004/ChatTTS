@@ -3,16 +3,15 @@ import torch
 import logging
 
 def select_device(min_memory = 2048):
-    """
-    Selects the best available device (GPU or CPU) based on free memory.
+    """Selects the best available device (GPU or CPU) based on free memory.
 
-    This function checks for available CUDA devices and selects the one with the most
-    free memory. If no GPU is available or the free memory on the best GPU is
-    below the specified minimum, it falls back to the CPU.
+    This function checks for available CUDA devices and selects the one with
+    the most free memory. If no GPU is available or the free memory on the
+    best GPU is below the specified minimum, it falls back to the CPU.
 
     Args:
-        min_memory (int, optional): The minimum required free memory in MB to select a GPU.
-            Defaults to 2048.
+        min_memory (int, optional): The minimum required free memory in MB to
+            select a GPU. Defaults to 2048.
 
     Returns:
         torch.device: The selected device (e.g., 'cuda:0' or 'cpu').
